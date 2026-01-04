@@ -12,5 +12,7 @@ roomRouter.post('/add', auth, upload.fields([
     { name: 'image4', maxCount: 1 },
     { name: 'image5', maxCount: 1 },
 ]), RoomController.addRoom);
+roomRouter.get('/list', RoomController.listRooms);
+roomRouter.post('/single', RoomController.listOneRoom);
 
 export default roomRouter;

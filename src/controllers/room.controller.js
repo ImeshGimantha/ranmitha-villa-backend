@@ -16,7 +16,40 @@ const RoomController = {
                 message: error.message
             });
         }
-    }
+    },
+    listRooms: async (req, res) => {
+        try {
+            const rooms = await RoomService.getRooms();
+            res.json({
+                success: true,
+                rooms
+            });
+        } catch (error) {
+            console.log(error);
+            res.json({
+                success: false,
+                message: error.message
+            });
+        }
+    },
+    listOneRoom: async (req, res) => {
+        try {
+            const { roomId } = req.body;
+            const room = await RoomService.getRoom(roomId);
+            res.json({
+                success: true,
+                room
+            });
+        } catch (error) {
+            console.log(error);
+            res.json({
+                success: false,
+                message: error.message
+            });
+        }
+    },
+    removeRoom: async (req, res) => {},
+    updateRoom: async (req, res) => {},
 };
 
 export default RoomController;

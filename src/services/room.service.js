@@ -35,6 +35,12 @@ const RoomService = {
         };
 
         return await RoomRepository.create(roomData);
+    },
+    getRooms: async () => {
+        return await RoomRepository.getAll();
+    },
+    getRoom: async (roomId) => {
+        return await RoomRepository.getOne(roomId);
     }
 };
 
