@@ -1,55 +1,65 @@
 import RoomService from "../services/room.service.js";
 
 const RoomController = {
-    addRoom: async (req, res) => {
+    createRoom: async (req, res, next) => {
         try {
-            const room = await RoomService.addRoom(req.body, req.files);
+            const room = await RoomService.createRoom(req.body, req.files);
             console.log(room);
-            res.json({
+            res.status(201).json({
                 success: true,
                 message: "New room successfully added!"
             });
         } catch (error) {
-            console.log(error);
-            res.json({
-                success: false,
-                message: error.message
-            });
+            next(error);
         }
     },
-    listRooms: async (req, res) => {
+    listRooms: async (req, res, next) => {
         try {
             const rooms = await RoomService.getRooms();
-            res.json({
+            res.status(200).json({
                 success: true,
                 rooms
             });
         } catch (error) {
-            console.log(error);
-            res.json({
-                success: false,
-                message: error.message
-            });
+            next(error);
         }
     },
-    listOneRoom: async (req, res) => {
+    listOneRoom: async (req, res, next) => {
         try {
             const { roomId } = req.body;
             const room = await RoomService.getRoom(roomId);
-            res.json({
+            res.status(200).json({
                 success: true,
                 room
             });
         } catch (error) {
-            console.log(error);
-            res.json({
-                success: false,
-                message: error.message
-            });
+            next(error);
         }
     },
-    removeRoom: async (req, res) => {},
-    updateRoom: async (req, res) => {},
+    removeRoom: async (req, res, next) => {
+        try {
+            const { roomId } = req.body;
+            await RoomService.removeRoom(roomId);
+            res.status(200).json({
+                success: true,
+                message: "Room successfully removed"
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+    updateRoom: async (req, res, next) => {
+        try {
+            const respond = await RoomService.updateRoom(req.body, req.files);
+            console.log(respond);
+            res.status(200).json({
+                success: true,
+                message: "Room successfully updated"
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
 };
 
 export default RoomController;
