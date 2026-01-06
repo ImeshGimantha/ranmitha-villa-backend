@@ -5,7 +5,7 @@ import { AppError } from '../utils/errorHandler.js';
 class RoomService {
     async createRoom(body, files) {
         try {
-            const { rid, type, description, pricePerNight, maxGuests, bedType, size, amenities, bathrooms, hasAC, status } = body;
+            const { rid, type, description, pricePerNight, maxGuests, bedrooms, beds, size, amenities, bathrooms, hasAC, status } = body;
 
             const image1 = files?.image1[0];
             const image2 = files?.image2[0];
@@ -28,7 +28,8 @@ class RoomService {
                 description,
                 pricePerNight: Number(pricePerNight),
                 maxGuests: Number(maxGuests),
-                bedType,
+                beds: JSON.parse(beds),
+                bedrooms: Number(bedrooms),
                 size,
                 images: imageUrl,
                 amenities: JSON.parse(amenities),
@@ -84,8 +85,7 @@ class RoomService {
 
     async updateRoom(body, files) {
         try {
-            console.log(body);
-            const { roomId, type, description, pricePerNight, maxGuests, bedType, size, amenities, bathrooms, hasAC } = body;
+            const { roomId, type, description, pricePerNight, maxGuests, beds, bedrooms, size, amenities, bathrooms, hasAC } = body;
 
             const image1 = files?.image1[0];
             const image2 = files?.image2[0];
@@ -110,18 +110,30 @@ class RoomService {
             
             room['type'] = type;
             room['description'] = description;
-            room['pricePerNight'] = pricePerNight;
-            room['maxGuests'] = maxGuests;
-            room['bedType'] = bedType;
+            room['pricePerNight'] = Number(pricePerNight);
+            room['maxGuests'] = Number(maxGuests);
+            room['beds'] = JSON.parse(beds);
+            room['bedrooms'] = Number(bedrooms);
             room['size'] = size;
             room['images'] = imageUrl;
-            room['amenities'] = amenities;
-            room['bathrooms'] = bathrooms;
-            room['hasAC'] = hasAC;
+            room['amenities'] = JSON.parse(amenities);
+            room['bathrooms'] = Number(bathrooms);
+            room['hasAC'] = hasAC === 'true';
 
             return await RoomRepository.update(room);
         } catch (error) {
             throw new AppError(`Failed to update room data: ${error.message}`, 500);
+        }
+    }
+
+    async updateStatus(roomId, status) {
+        try {
+            if (!roomId) {
+                throw new AppError("Room ID must be needed", 400);
+            }
+            return await RoomRepository.updateStatus(roomId, status);
+        } catch (error) {
+            throw new AppError(`Failed to update room status: ${error.message}`, 500);
         }
     }
 }

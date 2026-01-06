@@ -10,14 +10,15 @@ const roomSchema = new mongoose.Schema({
     description: { type: String, required: true },
     pricePerNight: { type: Number, required: true },
     maxGuests: { type: Number, required: true },
-    bedType: {
-        type: String,
-        enum: ["King", "Queen", "Twin"],
-        required: true
+    beds: {
+        king: { type: String, required: true, default: 0 },
+        queen: { type: String, required: true, default: 0 },
+        twin: { type: String, required: true, default: 0 },
     },
     size: { type: String, required: true },
     images: { type: Array, required: true },
     amenities: { type: Array, required: true },
+    bedrooms: { type: Number, required: true, default: 1 },
     bathrooms: { type: Number, required: true },
     hasAC: { type: Boolean, required: true },
     status: {
@@ -26,7 +27,8 @@ const roomSchema = new mongoose.Schema({
         default: "available"
     },
 }, {
-    timestamps: true
+    timestamps: true,
+    minimize: false
 });
 
 const Room = mongoose.models.room || mongoose.model('room', roomSchema);

@@ -50,8 +50,7 @@ const RoomController = {
     },
     updateRoom: async (req, res, next) => {
         try {
-            const respond = await RoomService.updateRoom(req.body, req.files);
-            console.log(respond);
+            await RoomService.updateRoom(req.body, req.files);
             res.status(200).json({
                 success: true,
                 message: "Room successfully updated"
@@ -60,6 +59,18 @@ const RoomController = {
             next(error);
         }
     },
+    updateRoomStatus: async (req, res, next) => {
+        try {
+            const { roomId, status } = req.body;
+            await RoomService.updateStatus(roomId, status);
+            res.status(200).json({
+                success: true,
+                message: "Room status successfully updated"
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
 };
 
 export default RoomController;

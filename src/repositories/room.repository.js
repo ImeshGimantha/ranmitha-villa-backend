@@ -22,6 +22,10 @@ class RoomRepository {
     async update(room) {
         return await Room.findByIdAndUpdate(room._id, room);
     }
+
+    async updateStatus(roomId, status) {
+        return await Room.findByIdAndUpdate(roomId, {status});
+    }
 }
 
 export default new RoomRepository;
