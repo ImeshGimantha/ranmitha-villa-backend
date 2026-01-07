@@ -69,6 +69,14 @@ class BookingService {
             throw new AppError(`Can't cancelled reservation: ${error.message}`, 400);
         }
     }
+
+    async allReservation() {
+        try {
+            return await BookingRepository.getAll();
+        } catch (error) {
+            throw new AppError(`Can't fetch reservations: ${error.message}`, 500);
+        }
+    }
 }
 
 export default new BookingService;

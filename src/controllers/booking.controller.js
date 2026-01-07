@@ -34,6 +34,18 @@ const BookingController = {
             next(error);
         }
     },
+    listAllReservation: async (req, res, next) => {
+        try {
+            const reservations = await BookingService.allReservation();
+            res.json({
+                success: true,
+                reservations
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+    listUserReservations: async (req, res, next) => {}
 }
 
 export default BookingController;
