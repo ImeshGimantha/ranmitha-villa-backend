@@ -1,6 +1,7 @@
 import BookingRepository from "../repositories/booking.repository.js";
 import RoomRepository from "../repositories/room.repository.js";
 import { AppError } from "../utils/errorHandler.js";
+import userService from "./user.service.js";
 
 class BookingService {
     async temporyReserve(body) {
@@ -42,6 +43,9 @@ class BookingService {
     async confirmReservation(body) {
         try {
             const { bookingId } = body;
+
+            // if user not in the sysytem, then user register
+            await userService.register(body);
 
             if (!bookingId) throw new AppError("Booking ID must be needed");
 

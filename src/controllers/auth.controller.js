@@ -1,6 +1,6 @@
 import authService from "../services/auth.service.js";
 
-const UserController = {
+const AuthController = {
     login: async (req, res) => {
         try {
             const { token } = await authService.authenticateUser(req.body);
@@ -25,4 +25,4 @@ const UserController = {
     }
 };
 
-export default UserController;
+export default AuthController;
