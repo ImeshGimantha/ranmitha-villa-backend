@@ -12,10 +12,22 @@ const bookingSchema = new mongoose.Schema({
         enum: ['pending', 'confirmed', 'cancelled', 'completed'],
         default: 'pending'
     },
-    total_price: { type: Number, required: true }
+    total_price: { type: Number, required: true },
+    expiresAt: {
+        type: Date, 
+        default: () => new Date(Date.now() + 5 * 60 * 1000)
+    }
 }, {
     timestamps: true,
 });
+
+bookingSchema.index(
+    { expiresAt: 1 }, 
+    { 
+        expireAfterSeconds: 0,
+        partialFilterExpression: { status: 'pending' }
+    }
+);
 
 const Booking = mongoose.models.booking || mongoose.model('booking', bookingSchema);
 

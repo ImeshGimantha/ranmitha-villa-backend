@@ -43,16 +43,30 @@ class BookingService {
     async confirmReservation(body) {
         try {
             const { bookingId } = body;
+            let reservation = {};
 
             // if user not in the sysytem, then user register
             await userService.register(body);
 
             if (!bookingId) throw new AppError("Booking ID must be needed");
 
-            const booking = await BookingRepository.getOne(bookingId);
-            if (!booking) await this.temporyReserve(body); 
+            reservation = await BookingRepository.getOne(bookingId);
+            
+            if (!reservation) {
+                reservation = await this.temporyReserve(body); 
+            }
 
-            return await BookingRepository.updateStatus(bookingId, "confirmed");
+            const booking = {
+                booking_id: reservation['booking_id'],
+                room_id: reservation['room_id'],
+                user_id: reservation['user_id'],
+                check_in_date: reservation["check_in_date"],
+                check_out_date: reservation["check_out_date"],
+                status: 'confirmed',
+                total_price: reservation["total_price"],
+                $unset: { expiresAt: 1}
+            }
+            return await BookingRepository.confirm(bookingId, booking);
         } catch (error) {
             throw new AppError(`Can't change reservation status or reserve room: ${error.message}`, 500);
         }

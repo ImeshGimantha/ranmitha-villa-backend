@@ -25,6 +25,10 @@ class BookingRepository {
         return overlapingBooking ? false : true;
     }
 
+    async confirm(bookingId, booking) {
+        return await Booking.findByIdAndUpdate(bookingId, booking, {new: true});
+    }
+
     async updateStatus(bookingId, status) {
         return await Booking.findByIdAndUpdate(bookingId, {status});
     }
