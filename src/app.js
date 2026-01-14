@@ -6,6 +6,7 @@ import error from './middlewares/error.middleware.js';
 import bookingRouter from './routes/booking.routes.js';
 import userRouter from './routes/user.routes.js';
 import tourRouter from './routes/tour.routes.js';
+import blockedDateRouter from './routes/blockedDate.routes.js';
 
 const app = express();
 
@@ -20,5 +21,6 @@ app.use('/api/room', roomRouter);
 app.use('/api/booking', bookingRouter);
 app.use('/api/user', userRouter);
 app.use('/api/tour', tourRouter);
+app.use('/api/block', blockedDateRouter);
 
 export default app;
