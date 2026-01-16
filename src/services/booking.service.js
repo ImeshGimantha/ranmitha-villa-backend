@@ -1,17 +1,19 @@
 import BookingRepository from "../repositories/booking.repository.js";
-import RoomRepository from "../repositories/room.repository.js";
+import mailRepository from "../repositories/mail.repository.js";
+import roomRepository from "../repositories/room.repository.js";
+import userRepository from "../repositories/user.repository.js";
 import { AppError } from "../utils/errorHandler.js";
 import userService from "./user.service.js";
 
 class BookingService {
     async temporyReserve(body) {
         try {
-            const { roomId, booking_id, room_id, user_id, check_in_date, check_out_date } = body;
+            const { roomId, booking_id, room_id, user_id, check_in_date, check_out_date, guests } = body;
             
             const checkIn = new Date(check_in_date).getTime();
             const checkOut = new Date(check_out_date).getTime();
 
-            const room = await RoomRepository.getOne(roomId);
+            const room = await roomRepository.getOne(roomId);
             const nights = (checkOut - checkIn)/(1000 * 60 * 60 * 24);
             
             if (!await BookingRepository.isAvailabe(roomId, room_id, checkIn, checkOut)) {
@@ -24,6 +26,8 @@ class BookingService {
                 user_id,
                 check_in_date: checkIn,
                 check_out_date: checkOut,
+                guests: Number(guests),
+                nights: Number(nights),
                 status: 'pending',
                 total_price: room.pricePerNight * nights
             }
@@ -42,7 +46,7 @@ class BookingService {
     */
     async confirmReservation(body) {
         try {
-            const { bookingId } = body;
+            const { bookingId, roomId, userId } = body;
             let reservation = {};
 
             // if user not in the sysytem, then user register
@@ -62,11 +66,18 @@ class BookingService {
                 user_id: reservation['user_id'],
                 check_in_date: reservation["check_in_date"],
                 check_out_date: reservation["check_out_date"],
+                guests: reservation["guests"],
+                nights: reservation["nights"],
                 status: 'confirmed',
                 total_price: reservation["total_price"],
                 $unset: { expiresAt: 1}
             }
-            return await BookingRepository.confirm(bookingId, booking);
+
+            await BookingRepository.confirm(bookingId, booking);
+            const room = await roomRepository.getOne(roomId);
+            const user = await userRepository.getOne(userId);
+            console.log(user);
+            return await mailRepository.booking(booking, room, user);
         } catch (error) {
             throw new AppError(`Can't change reservation status or reserve room: ${error.message}`, 500);
         }
@@ -93,6 +104,15 @@ class BookingService {
             return await BookingRepository.getAll();
         } catch (error) {
             throw new AppError(`Can't fetch reservations: ${error.message}`, 500);
+        }
+    }
+
+    async singleReservation(body) {
+        try {
+            const { bookingId } = body;
+            return await BookingRepository.getOne(bookingId);
+        } catch (error) {
+            throw new AppError(`Can't fetch booking information: ${error.message}`);
         }
     }
 }
