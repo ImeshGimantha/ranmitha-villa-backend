@@ -14,7 +14,7 @@ class BookingService {
             const room = await RoomRepository.getOne(roomId);
             const nights = (checkOut - checkIn)/(1000 * 60 * 60 * 24);
             
-            if (!await BookingRepository.isAvailabe(room_id, checkIn, checkOut)) {
+            if (!await BookingRepository.isAvailabe(roomId, room_id, checkIn, checkOut)) {
                 throw new AppError(`Room is not available`, 200);
             }
             
